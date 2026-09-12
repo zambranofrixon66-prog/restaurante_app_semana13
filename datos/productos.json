@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "nombre": "Hamburguesa Clasica",
+    "precio": 6.50,
+    "categoria": "Platos Fuertes"
+  },
+  {
+    "id": 2,
+    "nombre": "Papas Fritas Medianas",
+    "precio": 2.50,
+    "categoria": "Acompañamientos"
+  },
+  {
+    "id": 3,
+    "nombre": "Gaseosa 500ml",
+    "precio": 1.50,
+    "categoria": "Bebidas"
+  },
+  {
+    "id": 4,
+    "nombre": "Postre Tres Leches",
+    "precio": 3.00,
+    "categoria": "Postres"
+  }
+]
