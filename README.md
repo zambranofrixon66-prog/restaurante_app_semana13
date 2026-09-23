@@ -1,15 +1,14 @@
-````markdown
-# Restaurante App - Semana 13
+# Restaurante App - Semana 14
 
 **Estudiante:** Frixon Jeancarlos Zambrano Ortiz  
 **Asignatura:** Programación Orientada a Objetos  
-**Semana:** 13  
+**Semana:** 14  
 
 ## Propósito
 
-En esta semana se realizó la transición de la aplicación del restaurante desde una interacción por consola hacia una interfaz gráfica desarrollada con `Tkinter`.
+En esta semana se realizó la evolución de la aplicación `restaurante_app` mediante la integración de componentes avanzados, contenedores y gestores de geometría de `Tkinter` y `ttk`.
 
-El objetivo principal fue mejorar la forma en que el usuario interactúa con el sistema, manteniendo la lógica y la estructura desarrollada anteriormente. Además, se continúa utilizando archivos `JSON` para almacenar la información de productos y usuarios.
+El objetivo principal fue transformar la interfaz gráfica inicial hacia una experiencia de usuario más clara, amigable y estructurada. Se implementaron formularios, áreas de visualización tabular y paneles de control que permiten gestionar el catálogo de productos (registro, consulta, actualización y eliminación) y consultar los usuarios registrados, preservando estrictamente la separación de responsabilidades y la persistencia en archivos `JSON`.
 
 ## Estructura del Proyecto
 
@@ -32,42 +31,53 @@ restaurante_app/
 │   └── main_view.py
 ├── main.py
 └── README.md
-````
+```
 
 ## Descripción de la Estructura
 
-* `datos/`: contiene los archivos `JSON` con la información de productos y usuarios.
-* `modelos/`: contiene las clases principales del sistema, como `Producto` y `Usuario`.
-* `servicios/`: contiene la lógica para leer los datos, realizar validaciones y gestionar las operaciones del sistema.
-* `ui/`: contiene las ventanas creadas con `Tkinter`.
-* `main.py`: inicia la aplicación y controla el cambio entre las diferentes vistas.
-* `README.md`: contiene la información general y el funcionamiento del proyecto.
+* `datos/`: almacena los archivos `JSON` (`productos.json` y `usuarios.json`) que garantizan la persistencia de datos.
+* `modelos/`: define las clases entidad del sistema, como `Producto` y `Usuario`, junto con sus métodos de serialización.
+* `servicios/`: contiene la lógica del negocio (`RestauranteServicio`) y la lectura/escritura en disco (`ArchivoServicio`), evitando que la interfaz manipule archivos o aplique reglas de negocio directamente.
+* `ui/`: alberga las ventanas desarrolladas con `Tkinter` (`LoginView` para autenticación y `MainView` para la gestión y consulta).
+* `main.py`: punto de entrada que inicializa la aplicación y coordina el flujo de acceso.
+* `README.md`: documentación completa del proyecto correspondiente a la Semana 14.
 
-## Funcionamiento de la Aplicación
+## Mejoras Incorporadas en la Interfaz (Componentes y Contenedores)
 
-1. Al ejecutar el programa se muestra la pantalla de inicio de sesión.
-2. El usuario ingresa su nombre de usuario y contraseña.
-3. Las credenciales son validadas mediante `RestauranteServicio`.
-4. Si los datos son correctos, se muestra la ventana principal.
-5. Desde la ventana principal se pueden consultar los productos y usuarios registrados.
-6. La opción de ventas muestra una notificación para una futura implementación.
-7. El usuario puede cerrar sesión y regresar a la pantalla de acceso.
+La interfaz principal (`MainView`) fue rediseñada utilizando contenedores organizados para estructurar de manera óptima las zonas de navegación, captura y presentación:
 
-## Interfaz Gráfica
+1. **`ttk.Notebook` (Pestañas de Navegación):** Permite organizar el sistema en dos áreas claramente diferenciadas:
+   * **Gestión de Productos:** Área operativa para registrar, consultar, modificar y eliminar artículos.
+   * **Consulta de Usuarios:** Directorio con la lista del personal y usuarios registrados.
+2. **`ttk.LabelFrame` (Contenedores Agrupadores):** Se emplearon marcos con título para delimitar visualmente:
+   * El formulario de entrada de datos.
+   * El panel de botones y acciones.
+   * El catálogo visual de productos y el directorio de usuarios.
+3. **`ttk.Treeview` y `ttk.Scrollbar` (Visualización Tabular):** Permite presentar la información estructurada en columnas (ID, Nombre, Categoría, Precio y Stock) con desplazamiento vertical fluido.
+4. **`ttk.Combobox` (Lista Desplegable):** Facilita la selección controlada de categorías de productos (Platos Fuertes, Bebidas, Postres, etc.).
+5. **`ttk.Button` con `command=`:** Enlace de todas las acciones del usuario sin recurrir a eventos complejos (`bind()`), manteniendo la interacción sencilla y limpia.
+6. **Gestores de Geometría (`pack` y `grid`):** Uso armónico de `pack()` para distribuir los paneles principales y `grid()` para alinear con precisión las etiquetas y cajas de texto del formulario.
 
-La interfaz gráfica fue desarrollada con `Tkinter` utilizando componentes como `Label`, `Entry`, `Button` y `Frame`.
+## Operaciones Implementadas sobre Productos
 
-Las vistas se encuentran separadas dentro de la carpeta `ui`, lo que permite mantener una mejor organización del código y evitar mezclar la interfaz gráfica con la lógica del sistema.
+Todas las operaciones se ejecutan mediante botones en la interfaz y delegan su validación a `RestauranteServicio`:
 
-## Separación de Responsabilidades
+* **Registrar:** Captura los datos ingresados en el formulario, valida campos obligatorios y números válidos, y guarda el nuevo producto en `productos.json`.
+* **Cargar / Consultar:** Permite ingresar un ID de producto para buscarlo en el sistema y rellenar automáticamente los campos del formulario para su revisión o modificación.
+* **Actualizar:** Modifica la información del producto existente tras validar los valores numéricos y la presencia del registro.
+* **Eliminar:** Remueve el producto seleccionado previa confirmación mediante un cuadro de diálogo (`messagebox.askyesno`).
+* **Limpiar:** Restablece todos los controles del formulario y devuelve el foco al campo del ID.
 
-El proyecto mantiene una estructura organizada donde cada parte cumple una función específica.
+## Separación de Responsabilidades y Persistencia
 
-Los modelos representan las entidades principales, los servicios realizan las validaciones y gestionan la información, mientras que la interfaz gráfica se encarga de mostrar los datos y recibir las acciones del usuario.
+Se mantuvo rigurosamente la arquitectura modular:
+* La capa **UI** (`MainView`) se limita a capturar los datos ingresados por el usuario, mostrar cuadros de diálogo informativos y actualizar la tabla visual.
+* La capa de **Servicios** (`RestauranteServicio`) procesa las reglas del restaurante (verificación de duplicados, validación de stock y precios mayores o iguales a cero).
+* La persistencia en `productos.json` se ejecuta inmediatamente tras cada operación exitosa mediante `ArchivoServicio`, asegurando que la información se conserve al cerrar y reiniciar la aplicación.
 
 ## Ejecución
 
-Para ejecutar la aplicación se debe abrir una terminal dentro de la carpeta principal del proyecto y escribir:
+Para iniciar la aplicación, abra una terminal en la carpeta principal del proyecto y ejecute:
 
 ```bash
 python main.py
@@ -76,17 +86,11 @@ python main.py
 ## Tecnologías Utilizadas
 
 * `Python`
-* `Tkinter`
+* `Tkinter` / `ttk` (`Notebook`, `LabelFrame`, `Treeview`, `Combobox`, `Scrollbar`, `Button`, `Entry`, `Label`)
 * `JSON`
-* `Programación Orientada a Objetos`
+* `Programación Orientada a Objetos` (POO)
+* `Git` y `GitHub`
 
 ## Conclusión
 
-Con esta actividad se logró incorporar una interfaz gráfica al sistema del restaurante, haciendo que la aplicación sea más sencilla y visual para el usuario.
-
-Además, se mantuvo la organización del proyecto mediante la separación de modelos, servicios e interfaz gráfica, facilitando futuras mejoras y nuevas funcionalidades.
-
-```
-
-Las palabras que más conviene resaltar son: `Tkinter`, `JSON`, `Producto`, `Usuario`, `RestauranteServicio`, `Label`, `Entry`, `Button`, `Frame`, `Python` y los nombres de archivos/carpetas.
-```
+Con la evolución de la Semana 14, `restaurante_app` consolidó una interfaz gráfica estructurada, intuitiva y profesional. El uso adecuado de componentes y contenedores permitió resolver las operaciones CRUD de productos y la consulta de usuarios en un entorno limpio y coherente, respetando la arquitectura modular y la persistencia de datos establecida.
